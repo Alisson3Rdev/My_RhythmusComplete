@@ -1,0 +1,29 @@
+import Feather from "@expo/vector-icons/Feather";
+import { Tabs } from "expo-router";
+
+export default function Layout() {
+  return (
+    <Tabs screenOptions={{ tabBarActiveTintColor: "#2E008B", headerShown: false }}>
+      <Tabs.Screen
+        name="IaScreen"
+        options={{ tabBarIcon: ({ color, size }) => <Feather name="cpu" size={size} color={color} /> }}
+      />
+      <Tabs.Screen
+        name="desempenho"
+        options={{ tabBarIcon: ({ color, size }) => <Feather name="bar-chart-2" size={size} color={color} /> }}
+      />
+      <Tabs.Screen
+        name="home"
+        options={{ tabBarIcon: ({ color, size }) => <Feather name="home" size={size} color={color} /> }}
+      />
+      <Tabs.Screen
+        name="perfil"
+        options={{ tabBarIcon: ({ color, size }) => <Feather name="user" size={size} color={color} /> }}
+      />
+      <Tabs.Screen
+        name="configuracoes"
+        options={{ tabBarIcon: ({ color, size }) => <Feather name="settings" size={size} color={color} /> }}
+      />
+    </Tabs>
+  );
+}

@@ -1,0 +1,14 @@
+**/node_modules/
+**/.expo/
+**/target/
+**/build/
+**/dist/
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+frontend/.git/
+*.log
+.DS_Store
