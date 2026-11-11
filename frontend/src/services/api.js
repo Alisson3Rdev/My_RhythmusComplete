@@ -10,9 +10,36 @@ let accessToken;
 let refreshToken;
 let refreshing;
 
+function restoreBrowserSession() {
+  if (typeof window === "undefined") return;
+  try {
+    accessToken = window.sessionStorage.getItem("rhythmus.accessToken") || undefined;
+    refreshToken = window.sessionStorage.getItem("rhythmus.refreshToken") || undefined;
+  } catch {
+    accessToken = undefined;
+    refreshToken = undefined;
+  }
+}
+
+restoreBrowserSession();
+
 export function setAuthTokens(access, refresh) {
   accessToken = access || undefined;
   refreshToken = refresh || undefined;
+  if (typeof window !== "undefined") {
+    try {
+      if (accessToken) window.sessionStorage.setItem("rhythmus.accessToken", accessToken);
+      else window.sessionStorage.removeItem("rhythmus.accessToken");
+      if (refreshToken) window.sessionStorage.setItem("rhythmus.refreshToken", refreshToken);
+      else window.sessionStorage.removeItem("rhythmus.refreshToken");
+    } catch {
+      // A sessão continua válida durante a navegação mesmo se o navegador bloquear storage.
+    }
+  }
+}
+
+export function hasAuthSession() {
+  return Boolean(accessToken);
 }
 
 api.interceptors.request.use((config) => {

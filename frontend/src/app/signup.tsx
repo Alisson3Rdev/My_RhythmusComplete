@@ -7,6 +7,7 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import userService from "@/services/UsuarioService" // caminho correto aqui
 import { setSignupDraft } from "@/services/signupDraft";
+import { showFormAlert } from "@/services/formAlert";
 export default function Signup() {
   const router = useRouter(); // Agora dentro da função, como deve ser
   const [viewPass, setViewPass] = useState(true);
@@ -17,6 +18,8 @@ export default function Signup() {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [apelido, setApelido] = useState("");
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const showError = (field: string) => formErrors[field] ? <Text style={styles.fieldError}>{formErrors[field]}</Text> : null;
 
   function onViewPass() {
     setViewPass(!viewPass);
@@ -51,16 +54,18 @@ export default function Signup() {
             placeholderTextColor="#606060"
             style={styles.inputGray}
             value={nome}
-            onChangeText={setNome}
+            onChangeText={(value) => { setNome(value); setFormErrors((old) => ({ ...old, nome: "" })); }}
           />
+          {showError("nome")}
           <Text style={styles.label}>Seu apelido</Text>
           <Input
             placeholder="Ex: joao123 "
             placeholderTextColor="#606060"
             style={styles.inputGray}
             value={apelido}
-            onChangeText={setApelido}
+            onChangeText={(value) => { setApelido(value); setFormErrors((old) => ({ ...old, apelido: "" })); }}
           />
+          {showError("apelido")}
           
 
           {/* Campo E-mail */}
@@ -71,9 +76,10 @@ export default function Signup() {
             keyboardType="email-address"
             style={styles.inputGray}
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(value) => { setEmail(value); setFormErrors((old) => ({ ...old, email: "" })); }}
             
           />
+          {showError("email")}
 
           {/* Campo Senha */}
           <Text style={styles.label}>Senha:</Text>
@@ -84,7 +90,7 @@ export default function Signup() {
               secureTextEntry={viewPass}
               style={[styles.inputGray, { flex: 1 }]}
               value={senha}
-              onChangeText={setSenha}
+              onChangeText={(value) => { setSenha(value); setFormErrors((old) => ({ ...old, senha: "" })); }}
             />
             <Pressable style={styles.btnEyePass} onPress={onViewPass}>
               <Feather
@@ -94,6 +100,7 @@ export default function Signup() {
               />
             </Pressable>
           </View>
+          {showError("senha")}
 
           {/* Campo Confirmar Senha */}
           <Text style={styles.label}>Confirmar Senha:</Text>
@@ -104,37 +111,29 @@ export default function Signup() {
               secureTextEntry={viewPass}
               style={[styles.inputGray, { flex: 1 }]}
               value={confirmarSenha}
-              onChangeText={setConfirmarSenha}
+              onChangeText={(value) => { setConfirmarSenha(value); setFormErrors((old) => ({ ...old, confirmarSenha: "" })); }}
             />
           </View>
+          {showError("confirmarSenha")}
 
        {/* campo do botão */}
       <View style={{ marginTop: 10 }}>
         <Button 
           label="Próximo" 
           onPress={() => {
-          // VALIDAÇÃO 1: Campos Vazios
-            if (!nome.trim() || !apelido.trim() || !email.trim() || !senha) {
-              alert("Por favor, preencha todos os campos!");
-              return;
-            }
-
-            if (senha.length < 6) {
-              alert("A senha deve ter pelo menos 6 caracteres.");
-              return;
-            }
-
-            // VALIDAÇÃO 2: E-mail (verificação simples de @)
-            if (!email.includes("@")) {
-              alert("Por favor, insira um e-mail válido!");
-              return;
-            }
-
-            // VALIDAÇÃO 3: Senhas iguais
-            if (senha !== confirmarSenha) {
-              alert("As senhas não coincidem!");
-              return;
-            }
+            const errors: Record<string, string> = {};
+            if (!nome.trim()) errors.nome = "Informe seu primeiro nome.";
+            else if (nome.trim().length < 2) errors.nome = "Use pelo menos 2 caracteres.";
+            if (!apelido.trim()) errors.apelido = "Informe seu apelido.";
+            else if (apelido.trim().length < 2) errors.apelido = "Use pelo menos 2 caracteres.";
+            if (!email.trim()) errors.email = "Informe seu e-mail.";
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errors.email = "Digite um e-mail válido.";
+            if (!senha) errors.senha = "Informe uma senha.";
+            else if (senha.length < 6) errors.senha = "A senha deve ter pelo menos 6 caracteres.";
+            if (!confirmarSenha) errors.confirmarSenha = "Confirme sua senha.";
+            else if (senha !== confirmarSenha) errors.confirmarSenha = "As senhas não coincidem.";
+            setFormErrors(errors);
+            if (Object.keys(errors).length) return;
             
             // Se passou por tudo, ele "viaja" para a próxima tela
             // Mantém a senha fora dos parâmetros/URL de navegação.
@@ -239,4 +238,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
+  fieldError: { color: "#C62828", fontSize: 13, marginTop: 6, marginLeft: 6 },
 });

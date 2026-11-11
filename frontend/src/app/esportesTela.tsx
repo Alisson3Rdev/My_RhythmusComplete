@@ -126,6 +126,10 @@ export default function Esportes() {
           </View>
 
           {/* --- BOTÃO DE PRÓXIMO --- */}
+          <View style={styles.navigationButtons}>
+          <Pressable style={styles.backButton} onPress={() => router.back()}>
+            <Feather name="chevron-left" size={28} color="#2E008B" /><Text style={styles.backText}>Voltar</Text>
+          </Pressable>
           <Pressable
             style={styles.nextButton}
             onPress={() =>
@@ -144,12 +148,12 @@ export default function Esportes() {
           >
             <Feather name="chevron-right" size={50} color="black" />
           </Pressable>
+          </View>
         </View>
       </View>
     </KeyboardAwareScrollView>
   );
 }
-
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -216,8 +220,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   nextButton: {
-    alignSelf: "flex-end",
     marginTop: 20,
     paddingBottom: 30,
   },
+  navigationButtons: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  backButton: { flexDirection: "row", alignItems: "center", padding: 8 },
+  backText: { color: "#2E008B", fontWeight: "600" },
 });

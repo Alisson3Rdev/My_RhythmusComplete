@@ -82,7 +82,11 @@ export default function Index() {
               UsuarioService.login(email.trim(), senha)
                 .then(() => router.replace("/tabs/home"))
                 .catch((error) => {
-                  Alert.alert("Não foi possível entrar", error.response?.data?.erro || error.message || "Verifique sua conexão e tente novamente.");
+                  if (error.response?.status === 401) {
+                    Alert.alert("Login inválido", "E-mail ou senha incorretos.");
+                  } else {
+                    Alert.alert("Não foi possível entrar", error.response?.data?.erro || error.message || "Verifique sua conexão e tente novamente.");
+                  }
                 });
               }} />
           </View>

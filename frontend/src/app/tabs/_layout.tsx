@@ -1,7 +1,17 @@
 import Feather from "@expo/vector-icons/Feather";
 import { Tabs } from "expo-router";
+import { Redirect } from "expo-router";
+import { useEffect, useState } from "react";
+import { hasAuthSession } from "@/services/api";
 
 export default function Layout() {
+  const [authorized, setAuthorized] = useState<boolean | null>(null);
+  useEffect(() => {
+    setAuthorized(hasAuthSession());
+  }, []);
+  if (authorized === null) return null;
+  if (!authorized) return <Redirect href="/" />;
+
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: "#2E008B", headerShown: false }}>
       <Tabs.Screen
